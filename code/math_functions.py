@@ -11,6 +11,8 @@ import json
 def encrypt_CTR_b(key, data):
     #input: key 32 bytes and bytes data
     #nonce is 8 byte default, can be changed
+    #data as bytes
+    #output: dict with bytes
     cipher = AES.new(key, AES.MODE_CTR)
 
     ct_bytes = cipher.encrypt(data)
@@ -23,7 +25,7 @@ def encrypt_CTR_b(key, data):
 
 def decrypt_CTR_b(key, json_dict):
 #input key 32 bytes
-#json_dict, containg nonce and ciphertextin base 64 encoding
+#json_dict, containg nonce and ciphertext as bytes
     pt = None
     try:
 
@@ -45,18 +47,18 @@ def decrypt_CTR_b(key, json_dict):
 
 
 def encode_b64(json_dict):
-    
+    #encodes specaial elemnts in the dict into bytes b64 encoding
     if 'mode' in json_dict:
-        json_dict['mode'] = b64encode(json_dict['mode']).decode('utf-8')
-    json_dict['nonce'] = b64encode(json_dict['nonce']).decode('utf-8')
-    json_dict['ciphertext'] = b64encode(json_dict['ciphertext']).decode('utf-8')
+        json_dict['mode'] = b64encode(json_dict['mode'])
+    json_dict['nonce'] = b64encode(json_dict['nonce'])
+    json_dict['ciphertext'] = b64encode(json_dict['ciphertext'])#.decode('utf-8')
     
     return json_dict
 
 def decode_b64(json_dict):
-
+    #decodes specaial elemnts in the dict from bytes b64 encoding to bytes
     if 'mode' in json_dict:
-        json_dict['nonce'] = b64decode(json_dict['nonce'])
+        json_dict['mode'] = b64decode(json_dict['mode'])
     json_dict['nonce'] = b64decode(json_dict['nonce'])
     json_dict['ciphertext'] = b64decode(json_dict['ciphertext'])
     
@@ -109,11 +111,13 @@ def loadKey(path_file):
     
 def write_to_file(pathfile, data_dict):
 #TODO error code handling
+#write the dict to a file
     pack_data = pack(data_dict)
     encrypted_file = open(pathfile, "wb")
     encrypted_file.write(pack_data)
     encrypted_file.close()
 def load_from_file(path_file):
+#load the dict from a file
     packed_data = readfile(path, "rb")
     result = unpack_b(packdata)
     
