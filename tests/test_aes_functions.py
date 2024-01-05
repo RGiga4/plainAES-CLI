@@ -4,7 +4,7 @@ import unittest
 # import the package
 import code
 
-from code.math_functions import *
+from code.aes_functions import *
 import json
 
 from base64 import b64encode
@@ -15,11 +15,9 @@ from Crypto.Cipher import AES
 from Crypto.Random import get_random_bytes
 import os.path
 
-
-
  
 # Define class to test the program
-class TestMathFunctions(unittest.TestCase):
+class TestAESFunctions(unittest.TestCase):
     
         
     def test_CTR_dec(self):
@@ -54,10 +52,8 @@ class TestMathFunctions(unittest.TestCase):
         
         json_dict_decoded = decode_b64(json_dict_b64)
         
-        print(json_dict_decoded)
-        
-        #self.assertEqual(type(json_dict_decoded['mode']), bytes)
-        #self.assertEqual(json_dict_decoded['mode'], bytes.fromhex('0A'))
+        self.assertEqual(type(json_dict_decoded['mode']), bytes)
+        self.assertEqual(json_dict_decoded['mode'], bytes.fromhex('0A'))
         self.assertEqual(type(json_dict_decoded['nonce']), bytes)
         self.assertEqual(json_dict_decoded['nonce'], bytes.fromhex('00AABBCC'))
         self.assertEqual(type(json_dict_decoded['ciphertext']), bytes)
