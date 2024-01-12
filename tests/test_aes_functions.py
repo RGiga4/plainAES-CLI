@@ -134,6 +134,8 @@ class TestAESFunctions(unittest.TestCase):
         self.assertTrue(os.path.isfile(path))
         content = readfile(path, "rb")
         
+        k = derive_Key("AAAA")
+        
         
     def test_filecreation(self):
         

@@ -85,8 +85,10 @@ def handle_password_key(args):
     else:
         args.key = None
     
-    if args.key:
-        pass#TODO derive key form password
+    #assumed and earler checked that key or password exists
+    if not args.key:
+        args.key = derive_Key(args.password)
+        
     
     
 def handle_input(args):
@@ -119,8 +121,8 @@ def handle_enc_dec(args):
         ciphertext_pack = pack(ciphertext_dict)
         args.outputcontent = ciphertext_pack
     if args.dec:
-        ciphertext_dict = unpack(args.inputcontent)
-        plaintext = decrypt_CTR_b(key, ciphertext_dict)
+        ciphertext_dict = unpack_b(args.inputcontent)
+        plaintext = decrypt_CTR_b(args.key, ciphertext_dict)
         args.outputcontent = plaintext
     
     #encode in b64 after encrypting

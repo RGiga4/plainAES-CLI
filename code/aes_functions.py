@@ -1,5 +1,7 @@
 from Crypto.Cipher import AES
+from Crypto.Protocol.KDF import PBKDF2
 from Crypto.Random import get_random_bytes
+from Crypto.Hash import SHA512
 
 from base64 import b64encode
 from base64 import b64decode
@@ -89,8 +91,12 @@ def readfile(path, opcode):
     #    content = content[:-1]
     return content
     
-def derive_Key(key):
-    pass
+def derive_Key(passphrase):
+    iterations = 10**4
+    salt = bytes.fromhex("47ba2fe75d760c4ff1c42b6394150fd9")
+    key_material = PBKDF2(passphrase, salt, iterations, hmac_hash_module=SHA512)
+    key = key_material[:32]
+    return key
 
 def unlockKeyfile(passphrase, path_file):
     pass

@@ -22,11 +22,6 @@ import argparse
 class TestHandler(unittest.TestCase):
     
     
-    #Test wether .e .d, set exclusuvly,
-    #Eroro if key and password not set
-    #correctly loaded key, pass args
-    #test falg humanreable for None
-    
     def test_parse_args1(self):
         sys_argv = ["-e", "-pass", "stdin"]
         
