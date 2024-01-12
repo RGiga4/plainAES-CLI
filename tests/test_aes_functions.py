@@ -138,8 +138,6 @@ class TestAESFunctions(unittest.TestCase):
     def test_filecreation(self):
         
         path = "msg1.txt"
-        
-        
         self.assertFalse(os.path.isfile(path))
         
         with open(path, 'wb') as opened_file:

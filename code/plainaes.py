@@ -6,7 +6,7 @@ from handler import *
 
 
 if __name__ == '__main__':
-    args = parse_args()
+    args = parse_args(sys.argv[1:])
     handle_password_key(args)
     handle_input(args)
     handle_enc_dec(args)

@@ -4,17 +4,21 @@ from base64 import b64encode
 from base64 import b64decode
 
 import argparse
+
+#from aes_functions import *
 from code.aes_functions import *
 
 import os.path
 import errno
+import getpass
 from os import strerror
 
 
 # The return object from parse_args is used to store additional information
 #like the key, ciphertext, plaintext, filenames, ect in it.
 
-def parse_args():
+def parse_args(sys_argv):
+    
     parser = argparse.ArgumentParser(
                     prog='plainaes',
                     description='Encrypts with aes via diffrent modes, ',
@@ -28,7 +32,7 @@ def parse_args():
     parser.add_argument('-pass', dest='passarg')
     parser.add_argument('-key', dest='keyarg')
     
-    args = parser.parse_args()
+    args = parser.parse_args(sys_argv)
     
     #encryption is the default
     if args.enc == False and args.dec == False:
@@ -55,7 +59,14 @@ def handle_password_key(args):
             password = args.passarg[5:]
             
             args.password = password
-        #TODO stdin
+        if args.passarg.startswith("stdin"):
+            password = getpass.getpass()
+            
+            args.password = password
+            
+    else:
+        args.password = None
+        
     #assumed hex encoding        
     
     if args.keyarg:
@@ -67,7 +78,15 @@ def handle_password_key(args):
             
             key = parsekey(args.keyarg[4:])
             args.key = key
-            
+        if args.keyarg.startswith("stdin"):
+            key = getpass.getpass(prompt = "Key in hex: ")
+            key = parsekey(key)
+            args.key = key
+    else:
+        args.key = None
+    
+    if args.key:
+        pass#TODO derive key form password
     
     
 def handle_input(args):
@@ -97,8 +116,8 @@ def handle_enc_dec(args):
     
     if args.enc:
         ciphertext_dict = encrypt_CTR_b(args.key, args.inputcontent)
-        ciphertext = pack(ciphertext_dict)
-        args.outputcontent = ciphertext
+        ciphertext_pack = pack(ciphertext_dict)
+        args.outputcontent = ciphertext_pack
     if args.dec:
         ciphertext_dict = unpack(args.inputcontent)
         plaintext = decrypt_CTR_b(key, ciphertext_dict)
@@ -117,6 +136,8 @@ def handle_output(args):
             if os.path.isfile(path):
                 raise Exception("Output file already exists")
             
+            with open(path, 'wb') as opened_file:
+                opened_file.write(args.outputcontent)
             
         if args.output.startswith("stdout"):
             print(args.outputcontent.decode('utf-8'))
