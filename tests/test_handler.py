@@ -253,6 +253,56 @@ class TestHandler(unittest.TestCase):
         self.assertEqual(content, args.outputcontent)
         
         os.remove(path)
+        
+    def test_func1(self):
+    # test encryption with normal parameters
+        sys_argv = ["-e", "-key", "key:aaaabbbbccccddddffff000011112222"]
+        
+        args = parse_args(sys_argv)
+        handle_password_key(args)
+        #Replace input handling
+        args.inputcontent = bytes.fromhex("41")
+        
+        handle_enc_dec(args)
+        
+        self.assertTrue(len(args.outputcontent) <= 14)
+        
+    def test_func2(self):
+    # test encryption with removed header e.g. mode bytes
+        sys_argv = ["-e", "-key", "key:aaaabbbbccccddddffff000011112222", "-noheader"]
+        
+        args = parse_args(sys_argv)
+        handle_password_key(args)
+        #Replace input handling
+        args.inputcontent = bytes.fromhex("41")
+        
+        handle_enc_dec(args)
+        
+        self.assertTrue(len(args.outputcontent) <= 9)#len nonce and ciphertext only
+    def test_func3(self):
+    # test decryption with normal parameters
+        sys_argv = ["-d", "-key", "key:aaaabbbbccccddddffff000011112222"]
+        
+        args = parse_args(sys_argv)
+        handle_password_key(args)
+        #Replace input handling
+        args.inputcontent = bytes.fromhex("0044824d1089e5451e1b75d6abd9")
+        
+        handle_enc_dec(args)
+        self.assertEqual(args.outputcontent, bytes.fromhex("41"))
+    def test_func4(self):
+    # test decryption with noheader flag
+        sys_argv = ["-d", "-key", "key:aaaabbbbccccddddffff000011112222", "-noheader"]
+        
+        args = parse_args(sys_argv)
+        handle_password_key(args)
+        #Replace input handling
+        args.inputcontent = bytes.fromhex("5f1ab6262f83a4975f")
+        
+        handle_enc_dec(args)
+        
+        self.assertEqual(args.outputcontent, bytes.fromhex("41"))
+        
  
 if __name__ == '__main__':
     unittest.main()
