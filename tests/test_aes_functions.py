@@ -19,23 +19,6 @@ import os.path
 # Define class to test the program
 class TestAESFunctions(unittest.TestCase):
     
-        
-    def test_CTR_dec(self):
-        # We assume that the key was securely shared beforehand
-        key = b'Sixteen byte key'
-        json_input = "{\"nonce\": \"DXG48Agj79w=\", \"ciphertext\": \"uPDjBN1f\"}"  #{"nonce": "XqP8WbylRt0=", "ciphertext": "Mie5lqje"}
-        
-        
-
-        b64 = json.loads(json_input)
-        
-        #b64["nonce"] = b64decode(b64['nonce'])
-        #b64["ciphertext"] = b64decode(b64['ciphertext'])
-        #decode_CTR_b(key, b64)
-        #decrypt_CTR_b(key, b64)
-        #print(b64decode(b64['nonce']))
-        #decode_CTR(key, b64)
-            
 
     def test_encode_decode_b64(self):
         json_dict_input = {'mode':bytes.fromhex('0A'), 'nonce':bytes.fromhex('00AABBCC'), 'ciphertext':bytes.fromhex('1122334455')}
@@ -81,13 +64,34 @@ class TestAESFunctions(unittest.TestCase):
         self.assertEqual(len(data_dict['mode']), 5)
         self.assertEqual(len(data_dict['nonce']), 8)
         
-        data_packed = pack(data_dict)
+        config = [('mode', 5), ('nonce', 8), ('ciphertext', None)]
+        
+        data_packed = pack(data_dict, config)
         self.assertEqual(type(data_packed), bytes)
         self.assertTrue(len(data_packed) > 0)
         
-        data_unpacked = unpack_b(data_packed)
+        data_unpacked = unpack_b(data_packed, config)
         
         self.assertEqual(data_unpacked['mode'], data_dict['mode'])
+        self.assertEqual(data_unpacked['nonce'], data_dict['nonce'])
+        self.assertEqual(data_unpacked['ciphertext'], data_dict['ciphertext'])
+        
+    def test_pack_unpack2(self):
+        
+        data_dict = {'mode':bytes.fromhex('0044824D10'), 'nonce':bytes.fromhex('0011223344556677'), 'ciphertext':bytes.fromhex('1122')}
+        self.assertEqual(len(data_dict['mode']), 5)
+        self.assertEqual(len(data_dict['nonce']), 8)
+        
+        config = [('nonce', 8), ('ciphertext', None)]
+        
+        data_packed = pack(data_dict, config)
+        self.assertEqual(type(data_packed), bytes)
+        self.assertEqual(len(data_packed), 10)#sum of nonce and ciphertext 8+2
+        
+        data_unpacked = unpack_b(data_packed, config)
+        
+        with self.assertRaises(Exception):
+            data_unpacked['mode']
         self.assertEqual(data_unpacked['nonce'], data_dict['nonce'])
         self.assertEqual(data_unpacked['ciphertext'], data_dict['ciphertext'])
         
@@ -180,7 +184,10 @@ class TestAESFunctions(unittest.TestCase):
         self.assertEqual(pt, b'Merry Christmas')
         os.remove(path_enc)
         
-    
+    def test_derive_Key(self):
+        passphrase = "geheim"
+        key = derive_Key(passphrase)
+        self.assertEqual(len(key), 32)
  
 if __name__ == '__main__':
     unittest.main()
