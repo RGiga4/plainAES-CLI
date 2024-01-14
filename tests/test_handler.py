@@ -33,7 +33,7 @@ class TestHandler(unittest.TestCase):
         self.assertEqual(args.humanreadable, False)
         self.assertIsNotNone(args.passarg)
         self.assertIsNone(args.keyarg)
-        self.assertIsNone(args.noheader)
+        self.assertEqual(args.noheader, False)
     def test_parse_args2(self):
         #parse_args normal behavior
         sys_argv = ["-d", "-pass", "stdin"]

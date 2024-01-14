@@ -31,6 +31,7 @@ def parse_args(sys_argv):
     parser.add_argument('-d', action='store_true', dest='dec' )
     parser.add_argument('-pass', dest='passarg')
     parser.add_argument('-key', dest='keyarg')
+    parser.add_argument('-noheader', action='store_true', dest='noheader')
     
     args = parser.parse_args(sys_argv)
     
@@ -115,13 +116,14 @@ def handle_enc_dec(args):
     #assume that input and outputs are bytes
     #and encrypting
     
+    config = [('mode', 5), ('nonce', 8), ('ciphertext', None)]
     
     if args.enc:
         ciphertext_dict = encrypt_CTR_b(args.key, args.inputcontent)
-        ciphertext_pack = pack(ciphertext_dict)
+        ciphertext_pack = pack(ciphertext_dict, config)
         args.outputcontent = ciphertext_pack
     if args.dec:
-        ciphertext_dict = unpack_b(args.inputcontent)
+        ciphertext_dict = unpack_b(args.inputcontent, config)
         plaintext = decrypt_CTR_b(args.key, ciphertext_dict)
         args.outputcontent = plaintext
     

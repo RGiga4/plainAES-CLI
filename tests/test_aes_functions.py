@@ -176,9 +176,9 @@ class TestAESFunctions(unittest.TestCase):
         content = f.read()
         f.close()
         
-        
+        config = [('mode', 5), ('nonce', 8), ('ciphertext', None)]
         self.assertEqual(type(content), bytes)
-        pt = unpack_b(content)
+        pt = unpack_b(content, config)
         pt = decrypt_CTR_b(key, pt)
         
         self.assertEqual(pt, b'Merry Christmas')

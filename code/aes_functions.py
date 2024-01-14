@@ -65,20 +65,31 @@ def decode_b64(json_dict):
     json_dict['ciphertext'] = b64decode(json_dict['ciphertext'])
     
     return json_dict
-def pack(data):
-    #print(data['mode'], data['nonce'], data['ciphertext'])
-    return data['mode']+ data['nonce']+ data['ciphertext']
+def pack(data, config):
+    res = None
+    
+    for key, _ in config:
+        if res:
+            res += data[key]
+        else:
+            res = data[key]
+    
+    return res
     
 
-def unpack_b(packed_data):
-    mode_size = 5
-    nonce_size = 8
+def unpack_b(packed_data, config):
+
     result_dict = {}
+    ptr = 0
     
-    result_dict["mode"] = packed_data[0 : mode_size]
-    result_dict["nonce"] = packed_data[mode_size : mode_size+nonce_size]
-    result_dict["ciphertext"] = packed_data[mode_size+nonce_size : ]
-    #print(result_dict)
+    for key, key_size in config:
+        if key_size is not None:
+            result_dict[key] = packed_data[ptr : ptr+key_size]
+            ptr += key_size
+        else:
+            result_dict[key] = packed_data[ptr :]
+            ptr = len(packed_data)
+    
     return result_dict
 
 def readfile(path, opcode):
@@ -92,7 +103,7 @@ def readfile(path, opcode):
     return content
     
 def derive_Key(passphrase):
-    iterations = 10**4
+    iterations = 10**5
     salt = bytes.fromhex("47ba2fe75d760c4ff1c42b6394150fd9")
     key_material = PBKDF2(passphrase, salt, iterations, hmac_hash_module=SHA512)
     key = key_material[:32]
@@ -118,13 +129,15 @@ def loadKey(path_file):
 def write_to_file(pathfile, data_dict):
 #TODO error code handling
 #write the dict to a file
-    pack_data = pack(data_dict)
+    config = [('mode', 5), ('nonce', 8), ('ciphertext', None)] #TODO move config into arguments
+    pack_data = pack(data_dict, config)
     encrypted_file = open(pathfile, "wb")
     encrypted_file.write(pack_data)
     encrypted_file.close()
 def load_from_file(path_file):
 #load the dict from a file
     packed_data = readfile(path, "rb")
-    result = unpack_b(packdata)
+    config = [('mode', 5), ('nonce', 8), ('ciphertext', None)] #TODO config into arguments
+    result = unpack_b(packdata, config)
     
     return result
