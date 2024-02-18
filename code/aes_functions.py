@@ -7,7 +7,6 @@ from base64 import b64encode
 from base64 import b64decode
 
 import json
-# math_functions.py
 
 
 def encrypt_CTR_b(key, data):

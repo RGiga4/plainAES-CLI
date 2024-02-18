@@ -1,6 +1,7 @@
 # test_math_functions.py
  
 import unittest
+from unittest.mock import patch
 # import the package
 import code
 
@@ -105,6 +106,45 @@ class TestHandler(unittest.TestCase):
         self.assertIsNotNone(args.passarg)
         self.assertIsNone(args.keyarg)
         self.assertEqual(args.noheader, True)
+    def test_parse_args9(self):
+        #parse_args normal behavior pout, textstdin flag not set
+        sys_argv = ["-e", "-pass", "stdin"]
+        
+        args = parse_args(sys_argv)
+        
+        self.assertEqual(args.enc, True)
+        self.assertEqual(args.dec, False)
+        self.assertEqual(args.humanreadable, False)
+        self.assertIsNotNone(args.passarg)
+        self.assertIsNone(args.keyarg)
+        self.assertEqual(args.printout, False)
+        self.assertEqual(args.textstdin, False)
+    def test_parse_args10(self):
+        #parse_args normal behavior pout flag set
+        sys_argv = ["-e", "-pass", "stdin", "-pout"]
+        
+        args = parse_args(sys_argv)
+        
+        self.assertEqual(args.enc, True)
+        self.assertEqual(args.dec, False)
+        self.assertEqual(args.humanreadable, False)
+        self.assertIsNotNone(args.passarg)
+        self.assertIsNone(args.keyarg)
+        self.assertEqual(args.printout, True)
+    def test_parse_args11(self):
+        #parse_args normal behavior textstdin flag set
+        sys_argv = ["-e", "-pass", "stdin", "-textin"]
+        
+        args = parse_args(sys_argv)
+        
+        self.assertEqual(args.enc, True)
+        self.assertEqual(args.dec, False)
+        self.assertEqual(args.humanreadable, False)
+        self.assertIsNotNone(args.passarg)
+        self.assertIsNone(args.keyarg)
+        self.assertEqual(args.textstdin, True)
+    
+        
     def test_handle_password_key1(self):
         #test key decoding from argument
         args = argparse.Namespace()
@@ -169,6 +209,7 @@ class TestHandler(unittest.TestCase):
         # test loading content from file
         args = argparse.Namespace()
         args.inputfile = "input3.txt"
+        args.textstdin = None
         
         path = "input3.txt"
         with open(path, 'wb') as opened_file:
@@ -239,8 +280,9 @@ class TestHandler(unittest.TestCase):
         #test writing output to file
         args = argparse.Namespace()
         path = "output1.txt"
-        args.output = "file:"+path
+        args.output = path
         args.outputcontent = b'abcdef'
+        args.printout = None
         
         self.assertFalse(os.path.isfile(path))
         
@@ -302,6 +344,80 @@ class TestHandler(unittest.TestCase):
         handle_enc_dec(args)
         
         self.assertEqual(args.outputcontent, bytes.fromhex("41"))
+        
+    def test_func5(self):
+    # test usecase of encrypting and decrypting file
+        path_input = "func5.txt"
+        path_enc = "func5.txt.enc"
+        path_output = "out5.txt"
+        msg_text = b'halloworldaaaabbbbccccddddffff000011112222'#ascii bytes
+        
+        with open(path_input, 'wb') as opened_file:
+            opened_file.write(msg_text)
+        
+        
+        sys_argv = ["-e", "-key", "key:aaaabbbbccccddddffff000011112222", "-in", path_input, "-out", path_enc]
+        
+        args = parse_args(sys_argv)
+        handle_password_key(args)
+        handle_input(args)
+        handle_enc_dec(args)
+        handle_output(args)
+        
+        #test file exists
+        self.assertTrue(os.path.isfile(path_enc))
+        
+        #decrypting
+        
+        sys_argv = ["-d", "-key", "key:aaaabbbbccccddddffff000011112222", "-in", path_enc, "-out", path_output]
+        
+        args = parse_args(sys_argv)
+        handle_password_key(args)
+        handle_input(args)
+        handle_enc_dec(args)
+        handle_output(args)
+        
+        #test output file exists
+        self.assertTrue(os.path.isfile(path_output))
+        
+        content_output = readfile(path_output, "rb")
+        
+        self.assertEqual(content_output, msg_text)
+        
+        os.remove(path_input)
+        os.remove(path_enc)
+        os.remove(path_output)
+    
+    
+    def test_func6(self):
+    # test usecase of encrypting and decrypting from stdin and output in stdout in base64
+        
+        
+        code.handler.w_input = lambda t=None : "Hallo"
+        code.handler.w_print = code.handler.dummy_print
+        
+        sys_argv = ["-e", "-a", "-key", "key:aaaabbbbccccddddffff000011112222", "-textin", "-pout"]
+        
+        args = parse_args(sys_argv)
+        handle_password_key(args)
+        handle_input(args)
+        handle_enc_dec(args)
+        handle_output(args)
+        
+        
+        
+        #decrypting
+        code.handler.w_input = lambda t=None : "AESCTRBVRjiHF2sJU0Om2jf3"
+        code.handler.w_print = code.handler.dummy_print
+        sys_argv = ["-d", "-a", "-key", "key:aaaabbbbccccddddffff000011112222", "-textin", "-pout"]
+        
+        args = parse_args(sys_argv)
+        handle_password_key(args)
+        handle_input(args)
+        handle_enc_dec(args)
+        handle_output(args)
+        
+        
         
  
 if __name__ == '__main__':

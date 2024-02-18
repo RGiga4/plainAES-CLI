@@ -7,13 +7,13 @@ The behaviour and command line flags are similar to openSSL and the command for 
 
 # Security
 Using plain AES commes with some dangers.
-In CTR-Mode never reuse the nonce with the same key, the masasge is not authetificated.
+In CTR-Mode never reuse the nonce with the same key, the masasge is not authentificated.
 More secure modes and more ussable are EAX and GCM which internally use CTR.
 The Disadvantages:
 * The Message length is leaked, often this is not considered confidantial
 * Nonce, Key pair resuse, this is in pratise and danger, because of acesses of poor quality random generators. An the Crib Dragging Attack 
  on the two messages
-* The message is not authenticated, for exapme AES-GCM hat an authentification
+* The message is not authenticated, e.g. the message can be modified with out detection. Alternevly AES-GCM hat an authentification mechanisam
 * For extrem long messages the Pseudo random Function constructed from AES, in the CTR Mode chould be distinguised from a real random one.
  l ~ 2^(n/2) for l-Blocks with AES-n (z.B. AES-128 in der Exabyte range)
 * For short messages the message size get inflatetd by the added nonce 8-12 Bytes and the header 6 Bytes.
@@ -90,7 +90,10 @@ The linebreak behaviour of base64 encoding comapred to openSSL base64 is diffren
     This propmt plainAES to output the result in the commandline
 
 -textin
-    This activate a propmt to input text via commandline
+    This enables the input of text via commandline
+    
+ -prompt
+	This activates text prompt to explain input and output
 
 
 # AES Modes
@@ -135,13 +138,14 @@ The underlying file system is used to generate some files and read them for tesi
 
 The test can be performed with
 
-unittest python -m unittest
+python -m unittest
 
 
 TODO:
 password verifcation in prompt
 skript for named pipes and editor
 keyring for managing keys
+key derivation
 
 
 
