@@ -417,6 +417,38 @@ class TestHandler(unittest.TestCase):
         handle_enc_dec(args)
         handle_output(args)
         
+        self.assertEqual(args.outputcontent, b'Hallo')
+        
+    def test_func_key_derivation(self):
+    # test usecase of encrypting and decrypting with derived key
+        
+        
+        code.handler.w_input = lambda t=None : "Hallo"
+        code.handler.w_print = code.handler.dummy_print
+        
+        sys_argv = ["-e", "-a", "-pass", "pass:strongpassword", "-textin", "-pout"]
+        
+        args = parse_args(sys_argv)
+        handle_password_key(args)
+        handle_input(args)
+        handle_enc_dec(args)
+        handle_output(args)
+        
+        
+        
+        #decrypting
+        code.handler.w_input = lambda t=None : "AESCTRAhrCaP0fhbuPm0gr08"
+        code.handler.w_print = code.handler.dummy_print
+        sys_argv = ["-d", "-a", "-pass", "pass:strongpassword", "-textin", "-pout"]
+        
+        args = parse_args(sys_argv)
+        handle_password_key(args)
+        handle_input(args)
+        handle_enc_dec(args)
+        handle_output(args)
+        
+        self.assertEqual(args.outputcontent, b'Hallo')
+        
         
         
  
