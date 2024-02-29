@@ -15,7 +15,7 @@ The Disadvantages:
  on the two messages
 * The message is not authenticated, e.g. the message can be modified with out detection. Alternevly AES-GCM hat an authentification mechanisam
 * For extrem long messages the Pseudo random Function constructed from AES, in the CTR Mode chould be distinguised from a real random one.
- l ~ 2^(n/2) for l-Blocks with AES-n (z.B. AES-128 in der Exabyte range)
+ l ~ 2^(n/2) for l-Blocks with AES-n
 * For short messages the message size get inflatetd by the added nonce 8-12 Bytes and the header 6 Bytes.
 
 
@@ -64,36 +64,36 @@ The Nonce is not removed with the -noheader option.
 # Arguments
 The Argument behavour is similar to openssl, notable plainAES does not expect an input nor generated an ouput via stdin/stdout by default, for this use the new flags -textin and -pout
 
--in filename
+-in filename  
     This specifies the input file.
 
--out filename
+-out filename  
     This specifies the output file. It will be created or overwritten if it already exists.
 
--e or -d
+-e or -d  
     This specifies whether to encrypt (-e) or to decrypt (-d). Encryption is the default. Of course you have to get all the other options right in order for it to function properly.
 
--a, -base64
+-a, -base64  
     These flags tell plainAES to apply Base64-encoding before or after the cryptographic operation. The -a and -base64 are equivalent. If you want to decode a base64 file it is necessary to use the -d option.
 The linebreak behaviour of base64 encoding comapred to openSSL base64 is diffrent.
 
--pass arg
+-pass arg  
     This specifies the password source. Possible values for arg are pass:password, file:filename or stdin, where password is your password and filename file containing the password. TODO test wether stdin is used by getpassword.
 
--key arg
+-key arg  
     This option allows you to set the key or key source used for encryption or decryption in hexdecimal encoding. This is the key directly used by the cipher algorithm. If no key is given plainAES will derive it from a password.
     Possible values for arg are key:keyword or file:filename, where keyword is your key and filename file containing the key in the first line of the file in hexdecimal encoding.
 
--noheader
+-noheader  
     this allows to remove the magic bytes. Then the output is only the nonce and ciphertext output form cipher
 
--pout
+-pout  
     This propmt plainAES to output the result in the commandline
 
--textin
+-textin  
     This enables the input of text via commandline
     
- -prompt
+ -prompt  
     This activates text prompt to explain input and output
 
 
