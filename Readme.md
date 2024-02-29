@@ -29,9 +29,9 @@ The key should be stored and entered in hexadecimal encoding, to have a more rel
 A key can be derived from a passphrase/password. plainAES uses a simple key derivation via PBKDF2 with a fixed number of iterationans (10e5) and a fixed salt. Better key derivation algorithms exists and can be used.
 # Usecases
 Entering text and receving a copy-pastable output
-plainaes [-e or -d] -a -textin -pout -pass stdin
+`plainaes [-e or -d] -a -textin -pout -pass stdin`
 Using AES for encrypting decrypting files
-plainaes [-e or -d] -in path_in -out path_out -k file:path_key
+`plainaes [-e or -d] -in path_in -out path_out -k file:path_key`
 Using plainaes as part of a bash pipeline
 # Metadata
 
@@ -105,7 +105,7 @@ The following AES-modes use only the encryption routine Enc_K to generate psydor
 CTR-Mode  
 Encrypt the successiv numbers ctr, ctr+1, ... and use this stream  
 
-ctr_i := Nonce + 00000000  
+ctr_0 := Nonce + 00000000  
 and incrimenting  
 C_i = P_i XOR Enc_K(ctr_i)  
 
@@ -127,8 +127,8 @@ C_i = P_i XOR Enc_K(C_i-1)
 openssl provides a similar functionaliy and by default has pager behavoir, expecting input from stdin and useing stdout for output.
 Additional ciphers and encoder are supported and can use filediscriptors directly.
 Example:
-Encryption: openssl aes-256-cbc -in attack-plan.txt -out message.enc
-Decryption: openssl aes-256-cbc -d -in message.enc -out plain-text.txt
+Encryption: `openssl aes-256-cbc -in attack-plan.txt -out message.enc`
+Decryption: `openssl aes-256-cbc -d -in message.enc -out plain-text.txt`
 
 For editing encrypted text files and editor can read from a named pipe and write to it.
 The content will be decrypted and encrypted again. Named pipe are in Memory or Kernel memory and are not files, and dont leak the content to disk. Beware of the right who can open and read from the pipe.
