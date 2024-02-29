@@ -102,25 +102,25 @@ The linebreak behaviour of base64 encoding comapred to openSSL base64 is diffren
 AES is a blockcipher for encrypting and decrypting block of size 128bits. Diffrent modes of AES are proposed for Streamcipher where messages can have arbitary length.
 The following AES-modes use only the encryption routine Enc_K to generate psydorandom stream and XOR ing with the plaintext. The decryption routine then also uses only Enc_K from AES to reproduce the psydorandom stream and retrevive the plantext.
 
-CTR-Mode
-Encrypt the successiv numbers ctr, ctr+1, ... and use this stream
+CTR-Mode  
+Encrypt the successiv numbers ctr, ctr+1, ... and use this stream  
 
-ctr_i := Nonce + 00000000
-and incrimenting
-C_i = P_i XOR Enc_K(ctr_i)
-
-
-Output Feedback Mode (OFB)
-Encrypting the IV i times and uses this Stram
-
-C_i = P_i XOR Enc_K^i(IV) 
+ctr_i := Nonce + 00000000  
+and incrimenting  
+C_i = P_i XOR Enc_K(ctr_i)  
 
 
-Cipher Feedback Mode (CFB)
-use the cipher text as the new IV
+Output Feedback Mode (OFB)  
+Encrypting the IV i times and uses this Stream  
 
-C_0 = P_0 XOR Enc_K(IV)
-C_i = P_i XOR Enc_K(C_i-1)
+C_i = P_i XOR Enc_K^i(IV)  
+
+
+Cipher Feedback Mode (CFB)  
+use the cipher text as the new IV  
+
+C_0 = P_0 XOR Enc_K(IV)  
+C_i = P_i XOR Enc_K(C_i-1)  
 
 # Alternatives
 
@@ -139,8 +139,9 @@ The underlying file system is used to generate some files and read them for tesi
 
 The test can be performed with
 
+```
 python -m unittest
-
+```
 
 TODO:
 password verifcation in prompt
